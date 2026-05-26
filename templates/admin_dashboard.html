@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - نتائج الاستبيان</title>
+    <link href="[REDACTED_CONN_STRING]://300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+            direction: rtl;
+            color: #1f2937;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            padding: 16px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .navbar h1 { font-size: 1.2rem; }
+        .navbar-actions { display: flex; gap: 12px; }
+        .navbar-actions a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .navbar-actions a:hover { background: rgba(255,255,255,0.15); }
+        .navbar-actions .btn-export {
+            background: #10b981;
+            border-radius: 20px;
+        }
+        .navbar-actions .btn-export:hover { background: #059669; }
+
+        .dashboard {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .stat-card .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-card .stat-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .section h3 {
+            color: #374151;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th {
+            background: #f9fafb;
+            padding: 12px 16px;
+            text-align: right;
+            font-weight: 700;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f3f4f6;
+            color: #4b5563;
+        }
+        tr:hover td { background: #faf5ff; }
+
+        /* Dimension Averages */
+        .dim-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .dim-row:last-child { border-bottom: none; }
+        .dim-name {
+            flex: 1;
+            font-size: 0.85rem;
+            color: #374151;
+        }
+        .dim-bar-wrapper {
+            width: 200px;
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .dim-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        .dim-value {
+            width: 50px;
+            text-align: center;
+            font-weight: 700;
+            color: #7c3aed;
+            font-size: 0.9rem;
+        }
+
+        /* Distribution */
+        .dist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+        .dist-item {
+            text-align: center;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 12px;
+        }
+        .dist-item .value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #7c3aed;
+        }
+        .dist-item .label {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 16px; }
+
+        @media (max-width: 768px) {
+            .navbar { flex-direction: column; gap: 12px; text-align: center; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .dim-bar-wrapper { width: 100px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>📊 لوحة التحكم - نتائج الاستبيان</h1>
+        <div class="navbar-actions">
+            <a href="{{ url_for('export_csv') }}" class="btn-export">📥 تصدير CSV</a>
+            <a href="{{ url_for('admin_logout') }}">تسجيل خروج</a>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <!-- إحصائيات عامة -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ total }}</div>
+                <div class="stat-label">إجمالي الاستجابات</div>
+            </div>
+            {% for stat in gender_stats %}
+            <div class="stat-card">
+                <div class="stat-number">{{ stat.count }}</div>
+                <div class="stat-label">{{ stat.gender }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if total > 0 %}
+        <!-- توزيع التخصصات -->
+        <div class="section">
+            <h3>📚 توزيع التخصصات</h3>
+            <div class="dist-grid">
+                {% for stat in major_stats %}
+                <div class="dist-item">
+                    <div class="value">{{ stat.count }}</div>
+                    <div class="label">{{ stat.major }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- توزيع المستويات -->
+        <div class="section">
+            <h3>🎓 توزيع المستويات الدراسية</h3>
+            <div class="dist-grid">
+                {% for stat in level_stats %}
+                <div class="dist-item">
+                    <div class="value">{{ stat.count }}</div>
+                    <div class="label">المستوى {{ stat.level }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- متوسطات الأبعاد -->
+        <div class="section">
+            <h3>📈 متوسط الإجابات حسب البعد (من 5)</h3>
+            {% for dim in dimension_avgs %}
+            <div class="dim-row">
+                <div class="dim-name">{{ dim.dimension }}</div>
+                <div class="dim-bar-wrapper">
+                    <div class="dim-bar" style="width: {{ (dim.avg_answer / 5) * 100 }}%"></div>
+                </div>
+                <div class="dim-value">{{ dim.avg_answer }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- آخر الاستجابات -->
+        <div class="section">
+            <h3>🕐 آخر الاستجابات</h3>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>النوع</th>
+                            <th>العمر</th>
+                            <th>التخصص</th>
+                            <th>المستوى</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for resp in recent %}
+                        <tr>
+                            <td>{{ resp.id }}</td>
+                            <td>{{ resp.gender }}</td>
+                            <td>{{ resp.age }}</td>
+                            <td>{{ resp.major }}{% if resp.major_other %} ({{ resp.major_other }}){% endif %}</td>
+                            <td>{{ resp.level }}</td>
+                            <td>{{ resp.submitted_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% else %}
+        <div class="section">
+            <div class="empty-state">
+                <div class="icon">📋</div>
+                <h3>لا توجد استجابات بعد</h3>
+                <p>شارك رابط الاستبيان مع الطلاب للحصول على إجابات</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

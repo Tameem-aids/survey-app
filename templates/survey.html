@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استبيان الدراسة - دور العلاقات العامة في تعزيز السمعة المؤسسية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- رأس الصفحة -->
+        <header class="survey-header">
+            <div class="university-logo">🎓</div>
+            <h1>استبيان الدراسة</h1>
+            <h2>دور العلاقات العامة في تعزيز السمعة المؤسسية لكلية الآداب بجامعة تعز</h2>
+        </header>
+
+        <!-- مقدمة الاستبيان -->
+        <div class="intro-card">
+            <h3>أولاً: مقدمة الاستبيان</h3>
+            <p>عزيزي/عزيزتي الطالب/الطالبة، يهدف هذا الاستبيان إلى التعرف إلى دور العلاقات العامة في تعزيز السمعة المؤسسية لكلية الآداب بجامعة تعز، وذلك لأغراض البحث العلمي فقط. نرجو منك الإجابة بدقة وموضوعية، علمًا بأن جميع المعلومات ستعامل بسرية تامة، ولن تستخدم إلا لأغراض البحث العلمي.</p>
+        </div>
+
+        <!-- تعليمات -->
+        <div class="instructions-card">
+            <h3>ثانياً: تعليمات الإجابة</h3>
+            <p>يرجى اختيار الخيار الذي يعبر عن درجة موافقتك على كل عبارة وفق مقياس ليكرت الخماسي:</p>
+            <div class="scale-legend">
+                <span class="scale-item"><strong>1</strong> = لا أوافق بشدة</span>
+                <span class="scale-item"><strong>2</strong> = لا أوافق</span>
+                <span class="scale-item"><strong>3</strong> = محايد</span>
+                <span class="scale-item"><strong>4</strong> = أوافق</span>
+                <span class="scale-item"><strong>5</strong> = أوافق بشدة</span>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('submit') }}" method="POST" id="surveyForm">
+            <!-- البيانات العامة -->
+            <div class="section-card">
+                <h3>ثالثاً: البيانات العامة</h3>
+
+                <div class="form-group">
+                    <label>1. النوع <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="gender" value="ذكر" required>
+                            <span class="radio-custom"></span>
+                            ذكر
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="gender" value="أنثى">
+                            <span class="radio-custom"></span>
+                            أنثى
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>2. العمر <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="age" value="أقل من 20 سنة" required>
+                            <span class="radio-custom"></span>
+                            أقل من 20 سنة
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="age" value="من 20 إلى أقل من 25 سنة">
+                            <span class="radio-custom"></span>
+                            من 20 إلى أقل من 25 سنة
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="age" value="25 سنة فأكثر">
+                            <span class="radio-custom"></span>
+                            25 سنة فأكثر
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>3. التخصص <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="major" value="إعلام" required>
+                            <span class="radio-custom"></span>
+                            إعلام
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="major" value="لغة عربية">
+                            <span class="radio-custom"></span>
+                            لغة عربية
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="major" value="لغة إنجليزية">
+                            <span class="radio-custom"></span>
+                            لغة إنجليزية
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="major" value="تاريخ">
+                            <span class="radio-custom"></span>
+                            تاريخ
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="major" value="جغرافيا">
+                            <span class="radio-custom"></span>
+                            جغرافيا
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="major" value="علم اجتماع">
+                            <span class="radio-custom"></span>
+                            علم اجتماع
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="major" value="تخصص آخر">
+                            <span class="radio-custom"></span>
+                            تخصص آخر
+                        </label>
+                    </div>
+                    <input type="text" name="major_other" class="text-input" placeholder="اكتب التخصص هنا إن اخترت (تخصص آخر)">
+                </div>
+
+                <div class="form-group">
+                    <label>4. المستوى الدراسي <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="level" value="الأول" required>
+                            <span class="radio-custom"></span>
+                            الأول
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="level" value="الثاني">
+                            <span class="radio-custom"></span>
+                            الثاني
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="level" value="الثالث">
+                            <span class="radio-custom"></span>
+                            الثالث
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="level" value="الرابع">
+                            <span class="radio-custom"></span>
+                            الرابع
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- محاور الاستبيان -->
+            <div class="section-card">
+                <h3>رابعاً: محاور الدراسة وأبعادها</h3>
+                <p class="section-desc">تم تنظيم الاستبيان وفق متغيرين رئيسيين: المتغير المستقل (دور العلاقات العامة)، والمتغير التابع (السمعة المؤسسية).</p>
+            </div>
+
+            {% for dim_key, dim_data in questions.items() %}
+            <div class="dimension-card">
+                <div class="dimension-header">
+                    <span class="variable-badge">{{ dim_data.variable }}</span>
+                    <h4>{{ dim_data.title }}</h4>
+                </div>
+
+                <div class="questions-table">
+                    <div class="table-header">
+                        <div class="col-num">#</div>
+                        <div class="col-text">العبارة</div>
+                        <div class="col-answer">لا أوافق بشدة</div>
+                        <div class="col-answer">لا أوافق</div>
+                        <div class="col-answer">محايد</div>
+                        <div class="col-answer">أوافق</div>
+                        <div class="col-answer">أوافق بشدة</div>
+                    </div>
+
+                    {% for q_num, q_text in dim_data.questions %}
+                    <div class="table-row">
+                        <div class="col-num">{{ q_num }}</div>
+                        <div class="col-text">{{ q_text }}</div>
+                        <div class="col-answer">
+                            <label class="radio-circle">
+                                <input type="radio" name="q{{ q_num }}" value="1" required>
+                                <span class="circle"></span>
+                            </label>
+                        </div>
+                        <div class="col-answer">
+                            <label class="radio-circle">
+                                <input type="radio" name="q{{ q_num }}" value="2">
+                                <span class="circle"></span>
+                            </label>
+                        </div>
+                        <div class="col-answer">
+                            <label class="radio-circle">
+                                <input type="radio" name="q{{ q_num }}" value="3">
+                                <span class="circle"></span>
+                            </label>
+                        </div>
+                        <div class="col-answer">
+                            <label class="radio-circle">
+                                <input type="radio" name="q{{ q_num }}" value="4">
+                                <span class="circle"></span>
+                            </label>
+                        </div>
+                        <div class="col-answer">
+                            <label class="radio-circle">
+                                <input type="radio" name="q{{ q_num }}" value="5">
+                                <span class="circle"></span>
+                            </label>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- زر الإرسال -->
+            <div class="submit-section">
+                <button type="submit" class="submit-btn">
+                    <span>إرسال الاستبيان</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- شريط التقدم -->
+    <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <script>
+        // حساب نسبة التقدم
+        const form = document.getElementById('surveyForm');
+        const progressFill = document.getElementById('progressFill');
+        const totalQuestions = 45 + 4; // 45 عبارة + 4 بيانات عامة
+
+        function updateProgress() {
+            const answered = form.querySelectorAll('input[type="radio"]:checked').length;
+            const percentage = Math.round((answered / totalQuestions) * 100);
+            progressFill.style.width = percentage + '%';
+        }
+
+        form.addEventListener('change', updateProgress);
+
+        // تأكيد قبل الإرسال
+        form.addEventListener('submit', function(e) {
+            const unanswered = [];
+            for (let i = 1; i <= 45; i++) {
+                if (!form.querySelector(`input[name="q${i}"]:checked`)) {
+                    unanswered.push(i);
+                }
+            }
+            if (unanswered.length > 0) {
+                e.preventDefault();
+                alert(`يرجى الإجابة على جميع العبارات. العبارات غير المجاب عنها: ${unanswered.join(', ')}`);
+            }
+        });
+    </script>
+</body>
+</html>
