@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'your-secret-key-change-this'  # غيّر هذا المفتاح
 
 # كلمة مرور لوحة التحكم (غيّرها)
-ADMIN_PASSWORD = 'admin123'
+ADMIN_PASSWORD = 'tameem7777'
 
 DATABASE = 'survey.db'
 
